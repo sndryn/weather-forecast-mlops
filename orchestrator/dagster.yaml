@@ -1,15 +1,15 @@
-# storage:
-#   postgres:
-#     postgres_db:
-#       username:
-#         env: DAGSTER_DB_USERNAME
-#       password:
-#         env: DAGSTER_DB_PASSWORD
-#       hostname:
-#         env: DAGSTER_DB_HOSTNAME
-#       db_name:
-#         env: DAGSTER_DB_NAME
-#       port: 5432
+storage:
+  postgres:
+    postgres_db:
+      username:
+        env: DAGSTER_DB_USERNAME
+      password:
+        env: DAGSTER_DB_PASSWORD
+      hostname:
+        env: DAGSTER_DB_HOSTNAME
+      db_name:
+        env: DAGSTER_DB_NAME
+      port: 5432
 
 # Configures how long Dagster waits for code locations
 # to load before timing out.

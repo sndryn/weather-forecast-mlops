@@ -49,7 +49,7 @@ def get_model() -> (
                 artifact_path="label_encoder/encoder.pkl",
                 dst_path=tmpdir,
             )
-            with open(local_path, "rb", encoding="utf-8") as f:
+            with open(local_path, "rb") as f:
                 encoder = pickle.load(f)
         return model_uri, model, encoder
 

@@ -16,9 +16,7 @@ DAG_GROUP_NAME = "ingestion"
 def asset_ingest_weather_data(
     config: AssetConfig,
 ):
-    date = datetime.strptime(
-        config.yesterday_date, "%Y-%m-%d"
-    )  # let's see, supposed to be today
+    date = datetime.strptime(config.today_date, "%Y-%m-%d")
 
     df = ingest_from_kaggle()
     ingest_into_db(df, date.year, date.month, date.day)
