@@ -1,0 +1,26 @@
+repos:
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v3.2.0
+  hooks:
+    - id: trailing-whitespace
+    - id: end-of-file-fixer
+    - id: check-yaml
+    - id: check-added-large-files
+
+- repo: local
+  hooks:
+    - id: formatting
+      name: formatting
+      language: system
+      entry: make quality_checks
+      pass_filenames: false
+      always_run: true
+
+- repo: local
+  hooks:
+    - id: pytest-check
+      name: pytest-check
+      language: system
+      entry: make test
+      pass_filenames: false
+      always_run: true
