@@ -98,13 +98,14 @@ air_quality_gb-defra-index
 ## 🛠️ How to Reproduce
 
 ### Prerequisite
+- Have Python 3.11
 - Have an AWS account
 - Have `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` (see: [AWS Guide](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_credentials_access-keys.html))
 - Have AWS CLI installed. Have logged in to AWS via CLI
 - Have Terraform installed (see: [Hashicorp Guide](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli))
 - Have docker and docker-compose installed (see: [Docker Guide](https://www.docker.com/get-started/))
 - Have Slack space, Slack channel and Slack Webhook (see: [Slack Guide](https://api.slack.com/messaging/webhooks))
-
+- Have pipenv installed
 
 - Git clone repository
 ```
