@@ -17,9 +17,7 @@ def ingest_from_kaggle():
     local_path = kagglehub.dataset_download(kaggle_path)
     df = pd.read_csv(f"{local_path}/{file_path}")
 
-    df["last_updated_utc"] = pd.to_datetime(
-        df["last_updated_epoch"], unit="s"
-    )
+    df["last_updated_utc"] = pd.to_datetime(df["last_updated_epoch"], unit="s")
     df["last_updated_date"] = df["last_updated_utc"].dt.date
     df["_load_timestamp"] = datetime.now()
     df = df.drop(columns=["last_updated_utc"])
@@ -36,16 +34,12 @@ def ingest_from_kaggle():
 def ingest_into_db(df: pd.DataFrame, year: int, month: int, day: int):
     db = Database()
     if db.check_if_table_exist(TABLE_NAME):
-        result_df = df[
-            df["last_updated_date"] == date(year, month, day)
-        ]
+        result_df = df[df["last_updated_date"] == date(year, month, day)]
         db.execute(
             f"DELETE FROM {TABLE_NAME} WHERE last_updated_date = '{year}-{month:02d}-{day:02d}'"
         )
     else:
-        ddl = open(
-            "mlops/ddl/weather_world.sql", "r", encoding="utf-8"
-        ).read()
+        ddl = open("mlops/ddl/weather_world.sql", "r", encoding="utf-8").read()
         db.execute(ddl)
         result_df = df
 

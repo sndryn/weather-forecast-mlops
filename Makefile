@@ -10,11 +10,15 @@ quality_checks:
 test:
 	cd orchestrator && pipenv run pytest mlops/tests
 
-build_and_run:
-	docker-compose up -d
-
 generate_env:
 	chmod +x deployment/generate_env.sh
 	./deployment/generate_env.sh
+
+build_and_run:
+	docker-compose up -d --build
+
+deploy:
+	chmod +x ./deployment/deploy.sh
+	./deployment/deploy.sh mlops_key.pem
 
 all: setup quality_checks test generate_env build_and_run

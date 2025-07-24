@@ -24,16 +24,10 @@ mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 client = MlflowClient()
 
 
-def get_model() -> (
-    Tuple[sklearn.multioutput.MultiOutputRegressor, dict]
-):
-    versions = client.search_model_versions(
-        f"name='{MLFLOW_MODEL_NAME}'"
-    )
+def get_model() -> Tuple[sklearn.multioutput.MultiOutputRegressor, dict]:
+    versions = client.search_model_versions(f"name='{MLFLOW_MODEL_NAME}'")
 
-    versions = sorted(
-        versions, key=lambda v: int(v.version), reverse=True
-    )
+    versions = sorted(versions, key=lambda v: int(v.version), reverse=True)
     model_uri = ""
     for v in versions:
         env = v.tags.get("environment")
@@ -74,9 +68,7 @@ def create_lag_columns(
         ascending=[True] * (len(feature_cols)) + [False],
     )
     grouped = (
-        df_sorted.groupby(feature_cols)[target_cols]
-        .agg(list)
-        .reset_index()
+        df_sorted.groupby(feature_cols)[target_cols].agg(list).reset_index()
     )
 
     lagged_dfs = []
@@ -109,9 +101,7 @@ def predict(
     x = df[feature_cols]
 
     predictions = model.predict(x)
-    preds_df = pd.DataFrame(
-        predictions, columns=target_cols, index=df.index
-    )
+    preds_df = pd.DataFrame(predictions, columns=target_cols, index=df.index)
     return preds_df
 
 
@@ -130,9 +120,7 @@ def store(df: pd.DataFrame, prediction_date: datetime.date):
     db.execute(
         f"DELETE FROM {table_name} WHERE prediction_date = '{prediction_date}'"
     )
-    df.to_sql(
-        table_name, con=db.engine, if_exists="append", index=False
-    )
+    df.to_sql(table_name, con=db.engine, if_exists="append", index=False)
     db.close()
 
 
@@ -178,18 +166,14 @@ def run(
         "air_quality_gb_defra_index",
     ]
 
-    df = create_lag_columns(
-        df, categorical_cols + numerical_cols, target_cols
-    )
+    df = create_lag_columns(df, categorical_cols + numerical_cols, target_cols)
     df["day"] = prediction_date.day
     df["month"] = prediction_date.month
 
     model_uri, model, encoders = get_model()
 
     lag_features = [col for col in df.columns if "_lag_" in col]
-    feature_cols = (
-        lag_features + categorical_cols + numerical_cols + date_cols
-    )
+    feature_cols = lag_features + categorical_cols + numerical_cols + date_cols
     test_df = transform(df, categorical_cols, encoders)
     pred_df = predict(test_df, feature_cols, target_cols, model)
     pred_df = pd.concat([df, pred_df], axis=1)

@@ -50,9 +50,7 @@ def split_data(
     border_date = start_date + relativedelta(months=12)
 
     mlflow.log_param("train_data_start_date", start_date)
-    mlflow.log_param(
-        "train_data_end_date", border_date - relativedelta(days=1)
-    )
+    mlflow.log_param("train_data_end_date", border_date - relativedelta(days=1))
     mlflow.log_param("test_data_start_date", border_date)
     mlflow.log_param("test_data_end_date", end_date)
 
@@ -73,14 +71,12 @@ def create_lag_columns(
 ) -> pd.DataFrame:
     lagged_cols = []
 
-    df = df.sort_values(
-        by=["location_name", "country", "last_updated_date"]
-    )
+    df = df.sort_values(by=["location_name", "country", "last_updated_date"])
     for col in target_cols:
         for lag in range(1, steps + 1):
-            lagged_col = df.groupby(["location_name", "country"])[
-                col
-            ].shift(lag)
+            lagged_col = df.groupby(["location_name", "country"])[col].shift(
+                lag
+            )
             lagged_col.name = f"{col}_lag_{lag}"
             lagged_cols.append(lagged_col)
 

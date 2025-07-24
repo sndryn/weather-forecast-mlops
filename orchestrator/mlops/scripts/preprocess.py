@@ -28,18 +28,14 @@ def clean_up_country(df: pd.DataFrame) -> pd.DataFrame:
         "Marrocos": "Morocco",
         "Letonia": "Latvia",
     }
-    df["country"] = df["country"].apply(
-        lambda x: country_corrections.get(x, x)
-    )
+    df["country"] = df["country"].apply(lambda x: country_corrections.get(x, x))
     return df
 
 
 def preprocess_data(
     df: pd.DataFrame,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    df["last_updated_utc"] = pd.to_datetime(
-        df["last_updated_epoch"], unit="s"
-    )
+    df["last_updated_utc"] = pd.to_datetime(df["last_updated_epoch"], unit="s")
     df["day"] = df["last_updated_utc"].dt.day
     df["month"] = df["last_updated_utc"].dt.month
 

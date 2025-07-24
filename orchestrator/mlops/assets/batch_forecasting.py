@@ -16,9 +16,7 @@ DAG_GROUP_NAME = "batch_forecasting"
 )
 def asset_forecast_weather(config: AssetConfig):
     today_date = datetime.strptime(config.today_date, "%Y-%m-%d").date()
-    tomorrow_date = datetime.strptime(
-        config.tomorrow_date, "%Y-%m-%d"
-    ).date()
+    tomorrow_date = datetime.strptime(config.tomorrow_date, "%Y-%m-%d").date()
 
     forecast.run(today_date, tomorrow_date)
 

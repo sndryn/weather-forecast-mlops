@@ -5,6 +5,7 @@ __pycache__/
 
 # Terraform
 infrastructure/.terraform
+*.DS_Store
 
 # Orchestrator
 *.db

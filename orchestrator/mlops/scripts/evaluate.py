@@ -30,9 +30,7 @@ def store(
 ):
     db = Database()
     if not db.check_if_table_exist(table_name):
-        ddl = open(
-            f"mlops/ddl/{table_name}.sql", "r", encoding="utf-8"
-        ).read()
+        ddl = open(f"mlops/ddl/{table_name}.sql", "r", encoding="utf-8").read()
         db.execute(ddl)
 
     db.execute(

@@ -3,11 +3,7 @@ from unittest.mock import MagicMock
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
-from mlops.scripts.forecast import (
-    create_lag_columns,
-    predict,
-    transform,
-)
+from mlops.scripts.forecast import create_lag_columns, predict, transform
 
 
 def test_create_lag_columns():
@@ -32,9 +28,7 @@ def test_create_lag_columns():
         "wind_mph",
     ]
 
-    lagged_df = create_lag_columns(
-        df, feature_cols, target_cols, steps=3
-    )
+    lagged_df = create_lag_columns(df, feature_cols, target_cols, steps=3)
 
     expected_cols = feature_cols + [
         "temperature_celsius_lag_1",
@@ -60,9 +54,7 @@ def test_transform():
         "country": LabelEncoder().fit(["USA", "Canada"]),
         "location_name": LabelEncoder().fit(["loc1", "loc2"]),
     }
-    transformed_df = transform(
-        df, ["country", "location_name"], encoders
-    )
+    transformed_df = transform(df, ["country", "location_name"], encoders)
 
     assert transformed_df["country"].dtype.kind in (
         "i",

@@ -61,9 +61,7 @@ def register(run: mlflow.run) -> Tuple[int, float]:
 
 
 def promote_to_prod(model_version: int, mean_nrmse: float):
-    versions = client.search_model_versions(
-        f"name='{MLFLOW_MODEL_NAME}'"
-    )
+    versions = client.search_model_versions(f"name='{MLFLOW_MODEL_NAME}'")
     prod_versions = [
         v for v in versions if v.tags.get("environment") == "production"
     ]

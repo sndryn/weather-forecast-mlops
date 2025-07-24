@@ -16,9 +16,7 @@ DAG_GROUP_NAME = "training"
     deps=["weather_data_ingestion"],
 )
 def asset_train_weather_data(config: AssetConfig):
-    config_date = datetime.strptime(
-        config.yesterday_date, "%Y-%m-%d"
-    ).date()
+    config_date = datetime.strptime(config.yesterday_date, "%Y-%m-%d").date()
     start_date = (config_date - relativedelta(years=1)).replace(day=1)
     end_date = config_date
 

@@ -18,9 +18,7 @@ def test_get_missing_locations():
     prediction_df = pd.DataFrame({"location_name": ["Loc2", "Loc4"]})
     prediction_date = datetime.date(2025, 7, 22)
 
-    result = get_missing_locations(
-        actual_df, prediction_df, prediction_date
-    )
+    result = get_missing_locations(actual_df, prediction_df, prediction_date)
 
     assert "missing_location_name" in result.columns
     assert "number_of_missing_value" in result.columns
