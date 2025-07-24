@@ -19,7 +19,6 @@ services:
 
   grafana:
     image: grafana/grafana-enterprise
-    user: "472"
     ports:
       - "3001:3000"
     volumes:

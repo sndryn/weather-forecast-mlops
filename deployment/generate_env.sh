@@ -1,4 +1,5 @@
 #!/bin/bash
+set -eu
 
 INI_FILE="deployment/ssm-config.ini"
 ENV_FILE=".env"
@@ -41,7 +42,10 @@ AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-ap-southeast-1}
 AWS_ACCESS_KEY_ID=$(awk -F '=' '/^\[default\]/{f=1} f==1 && /aws_access_key_id/{print $2; exit}' "$CREDS" 2>/dev/null | xargs)
 AWS_SECRET_ACCESS_KEY=$(awk -F '=' '/^\[default\]/{f=1} f==1 && /aws_secret_access_key/{print $2; exit}' "$CREDS" 2>/dev/null | xargs)
 
-# Append if found
-[[ -n $AWS_DEFAULT_REGION ]] && echo "AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION" >> "$ENV_FILE"
-[[ -n $AWS_ACCESS_KEY_ID ]] && echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> "$ENV_FILE"
-[[ -n $AWS_SECRET_ACCESS_KEY ]] && echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> "$ENV_FILE"
+if [[ -n "${AWS_ACCESS_KEY_ID+x}" ]]; then
+  echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> "$ENV_FILE"
+fi
+
+if [[ -n "${AWS_SECRET_ACCESS_KEY+x}" ]]; then
+  echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> "$ENV_FILE"
+fi
