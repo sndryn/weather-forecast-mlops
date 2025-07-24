@@ -1,6 +1,6 @@
 
 data "aws_ssm_parameter" "s3_bucket_name" {
-    name            = var.s3_bucket_ssm_name
+    name            = var.s3_ssm_artifact_bucket
     with_decryption = true
 }
 

@@ -1,5 +1,5 @@
-variable "s3_bucket_ssm_name" {
+variable "s3_ssm_artifact_bucket" {
     description = "SSM parameter name containing S3 bucket name"
     type        = string
-    default     = "/mlops/s3/bucket_name"
+
 }

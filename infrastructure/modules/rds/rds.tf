@@ -1,15 +1,15 @@
 data "aws_ssm_parameter" "rds_db_instance_mame" {
-    name            = var.rds_db_instance_ssm_name
+    name            = var.rds_ssm_db_instance_name
     with_decryption = true
 }
 
 data "aws_ssm_parameter" "rds_db_username" {
-    name            = var.rds_db_username_ssm_name
+    name            = var.rds_ssm_db_username
     with_decryption = true
 }
 
 data "aws_ssm_parameter" "rds_db_password" {
-    name            = var.rds_db_password_ssm_name
+    name            = var.rds_ssm_db_password
     with_decryption = true
 }
 

@@ -1,5 +1,3 @@
-
-
 setup:
 	cd orchestrator && pipenv install --dev
 	cd orchestrator && pipenv run pre-commit install
@@ -15,4 +13,8 @@ test:
 build_and_run:
 	docker-compose up -d
 
-all: setup quality_checks test build_and_run
+generate_env:
+	chmod +x deployment/generate_env.sh
+	./deployment/generate_env.sh
+
+all: setup quality_checks test generate_env build_and_run

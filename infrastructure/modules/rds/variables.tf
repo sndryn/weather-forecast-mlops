@@ -1,25 +1,19 @@
-variable "rds_db_instance_ssm_name" {
+variable "rds_ssm_db_instance_name" {
     description = "SSM parameter name containing DB Instance name"
-    type        = string
-    default     = "/mlops/db/instance_name"
 }
 
-variable "rds_db_username_ssm_name" {
+variable "rds_ssm_db_username" {
     description = "SSM parameter name containing DB username"
-    type        = string
-    default     = "/mlops/db/username"
 }
 
-variable "rds_db_password_ssm_name" {
+variable "rds_ssm_db_password" {
     description = "SSM parameter name containing DB username"
-    type        = string
-    default     = "/mlops/db/password"
 }
 
 variable "rds_instance_class" {
     description = "RDS instance class"
     type        = string
-    default     = "db.t3.micro" 
+    default     = "db.t3.micro"
 }
 
 variable "rds_allocated_storage" {
@@ -44,6 +38,18 @@ variable "rds_sg_id" {
 }
 
 variable "rds_subnet_ids" {
-  type        = list(string)
-  description = "Subnet IDs for the RDS subnet group"
+    type        = list(string)
+    description = "Subnet IDs for the RDS subnet group"
+}
+
+variable "postgres_ssm_dagster_db_name" {
+    type = string
+}
+
+variable "postgres_ssm_mlflow_db_name" {
+    type = string
+}
+
+variable "postgres_ssm_weather_db_name" {
+    type = string
 }

@@ -13,7 +13,7 @@ DAG_GROUP_NAME = "training"
     key="weather_data_training",
     group_name=DAG_GROUP_NAME,
     compute_kind="pandas",
-    deps=["weather_data_trainging"],
+    deps=["weather_data_ingestion"],
 )
 def asset_train_weather_data(config: AssetConfig):
     config_date = datetime.strptime(
@@ -33,20 +33,14 @@ def asset_train_weather_data(config: AssetConfig):
 )
 def asset_register_model():
     run = register_model.search_latest_run()
-    (
-        model_version,
-        mean_nrmse,
-    ) = register_model.register(run)
+    model_version, mean_nrmse = register_model.register(run)
     register_model.promote_to_prod(model_version, mean_nrmse)
 
 
 schedule = ScheduleDefinition(
     job=define_asset_job(
         f"{DAG_GROUP_NAME}_job",
-        selection=[
-            asset_train_weather_data,
-            asset_register_model,
-        ],
+        selection=[asset_train_weather_data, asset_register_model],
     ),
     cron_schedule="0 15 1 * *",
     execution_timezone="UTC",

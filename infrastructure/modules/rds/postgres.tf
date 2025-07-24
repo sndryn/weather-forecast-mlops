@@ -19,38 +19,13 @@ provider "postgresql" {
 }
 
 resource "postgresql_database" "mlflow" {
-  name = "mlflow"
+  name = var.postgres_ssm_mlflow_db_name
 }
 
 resource "postgresql_database" "dagster" {
-  name = "dagster"
+  name = var.postgres_ssm_dagster_db_name
 }
 
 resource "postgresql_database" "weather_forecast" {
-  name = "weather_forecast"
+  name = var.postgres_ssm_weather_db_name
 }
-
-
-# resource "postgresql_role" "mlops_user" {
-#   name     = data.aws_ssm_parameter.rds_db_username.value
-#   password = data.aws_ssm_parameter.rds_db_password.value
-#   login    = true
-# }
-
-# resource "postgresql_grant" "mlflow_db_access" {
-#   database   = postgresql_database.mlflow.name
-#   role       = postgresql_role.mlops_user.name
-#   privileges = ["CONNECT"]
-# }
-
-# resource "postgresql_grant" "dagster_db_access" {
-#   database   = postgresql_database.dagster.name
-#   role       = postgresql_role.mlops_user.name
-#   privileges = ["CONNECT"]
-# }
-
-# resource "postgresql_grant" "weather_db_access" {
-#   database   = postgresql_database.weather_forecast.name
-#   role       = postgresql_role.mlops_user.name
-#   privileges = ["CONNECT"]
-# }
