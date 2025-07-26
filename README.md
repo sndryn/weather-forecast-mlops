@@ -2,9 +2,9 @@
 
 ## 💡 Problem Description
 
-Using comprehensive, daily-updated weather data for over 200 capital cities worldwide taken from [Kaggle](https://www.kaggle.com/datasets/nelgiriyewithana/global-weather-repository/data), the main goal of the project is to develop a machine learning model that forecasts the next-day weather conditions, including temperature, wind speed, precipitation, humidity, UV, gust, and air quality.
+This project presents a complete end-to-end ML Ops system, covering experiment tracking, a training pipeline, batch forecasting, monitoring, deployment and infrastructure provisioning.
 
-This project also presents a complete end-to-end ML Ops system, covering experiment tracking, a training pipeline, batch forecasting, monitoring, deployment and infrastructure provisioning.
+Using comprehensive, daily-updated weather data for over 200 capital cities worldwide taken from [Kaggle](https://www.kaggle.com/datasets/nelgiriyewithana/global-weather-repository/data), we also develop a machine learning model that forecasts the next-day weather conditions, including temperature, wind speed, precipitation, humidity, UV, gust, and air quality.
 
 
 ## 🔧 Technical Stack
@@ -95,6 +95,9 @@ air_quality_gb-defra-index
 - Evaluation result will be monitored via grafana
 - Any unusual data exceeded the defined threshold will be alerted to Slack
 
+<img src="image/grafana.png" alt="Grafana" style="width:75%; height:auto;">
+<img src="image/slack.png" alt="Slack" style="width:75%; height:auto;">
+
 ## 🛠️ How to Reproduce
 
 ### Prerequisite
@@ -115,10 +118,11 @@ cd weather-forecast-mlops
 ```
 ### Setup Infrastructure
 - Create S3 bucket manually (via AWS CLI or console) for terraform state
+- Generate ssh key manually in AWS console or CLI
 - Setup some parameters in AWS Parameter Store (use `secure string`).
 ```
 /mlops/db/instance_name
-mlops/db/username
+/mlops/db/username
 /mlops/db/password
 /mlops/db/dagster_dbname
 /mlops/db/weather_dbname
@@ -132,6 +136,8 @@ mlops/db/username
 /mlops/slack/channel
 /mlops/grafana/username
 /mlops/grafana/password
+
+/mlops/instance/key_name
 
 ```
 - Fill out `prod.tfvars` with ssm parameter store paths
@@ -163,27 +169,21 @@ make all
     - Grafana: `localhost:5001`
 
 ### Deploy to Cloud via CLI
-- SSH to EC2 Instance
-```
-```
-- git clone
-```
-```
 - Run the follow command
 ```
-make all
+make deploy KEY_PATH=<path_to_your_ssh_key.pem>
 ```
 
+
 ## 📑 Index
-- MLflow config
-- Orchestrator
-- Training Pipeline
-- Batch Forecasting
-- Evaluation
-- Unit test
-- Grafana config
-- docker-compose.yml
-- Makefile (including formatting: pylint, isort, black)
-- pre-commit-config.yaml (including formatting: pylint, isort, black)
-- Github actions
-- IaC
+- [MLflow config](https://github.com/sndryn/weather-forecast-mlops/tree/master/mlflow)
+- [Orchestrator](https://github.com/sndryn/weather-forecast-mlops/tree/master/orchestrator)
+- [Training Pipeline](https://github.com/sndryn/weather-forecast-mlops/blob/master/orchestrator/mlops/assets/training.py)
+- [Batch Forecasting and Evaluation Pipeline](https://github.com/sndryn/weather-forecast-mlops/blob/master/orchestrator/mlops/assets/batch_forecasting.py)
+- [Unit test](https://github.com/sndryn/weather-forecast-mlops/tree/master/orchestrator/mlops/tests)
+- [Grafana config](https://github.com/sndryn/weather-forecast-mlops/tree/master/grafana)
+- [docker-compose.yml](https://github.com/sndryn/weather-forecast-mlops/blob/master/docker-compose.yaml)
+- [Makefile](https://github.com/sndryn/weather-forecast-mlops/blob/master/Makefile) (including formatting: pylint, isort, black)
+- [pre-commit-config.yaml](https://github.com/sndryn/weather-forecast-mlops/blob/master/orchestrator/.pre-commit-config.yaml) (including formatting: pylint, isort, black)
+- [IaC](https://github.com/sndryn/weather-forecast-mlops/tree/master/infrastructure)
+- [Github actions](https://github.com/sndryn/weather-forecast-mlops/tree/master/.github)
