@@ -19,6 +19,7 @@ build_and_run:
 
 deploy:
 	chmod +x ./deployment/deploy.sh
-	./deployment/deploy.sh mlops_key.pem
+	chmod 600 $(KEY_PATH)
+	./deployment/deploy.sh $(KEY_PATH)
 
 all: setup quality_checks test generate_env build_and_run

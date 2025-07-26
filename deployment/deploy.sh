@@ -1,20 +1,38 @@
+KEY_PATH=${1}
+TAG_NAME=ec2-mlops
+USER=ubuntu
 
-MLOPS_DB_INSTANCE_NAME=/mlops/db/instance_name
+chmod 600 $KEY_PATH
 
-MLOPS_DB_USERNAME=/mlops/db/username
-MLOPS_DB_PASSWORD=/mlops/db/password
+DNS=$(aws ec2 describe-instances \
+  --filters "Name=tag:name,Values=$TAG_NAME" "Name=instance-state-name,Values=running" \
+  --query "Reservations[0].Instances[0].PublicDnsName" \
+  --output text)
 
-DAGSTER_DB_NAME=/mlops/db/dagster_dbname
-WEATHER_DB_NAME=/mlops/db/weather_dbname
-MLFLOW_DB_NAME=/mlops/db/mlflow_dbname
+ssh -i "$KEY_PATH" -o StrictHostKeyChecking=no $USER@$DNS << 'EOF'
+set -e
+REPO_DIR="weather-forecast-mlops"
+REPO_URL="https://github.com/sndryn/weather-forecast-mlops.git"
+BRANCH="master"
 
-MLFLOW_ARTIFACT_ROOT=/mlops/mlflow/artifact_root
+if [ ! -d "$REPO_DIR" ]; then
+  echo "Cloning repo..."
+  git clone "$REPO_URL"
+fi
 
-MLFLOW_EXPERIMENT_NAME=/mlops/mlflow/experiment_name
-MLFLOW_MODEL_NAME=/mlops/mlflow/model_name
+cd "$REPO_DIR"
 
-SLACK_WEBHOOK=/mlops/slack/webhook
-SLACK_CHANNEL=/mlops/slack/channel
+echo "Fetching latest updates..."
+git fetch origin
 
-GRAFANA_USERNAME=/mlops/grafana/username
-GRAFANA_PASSWORD=/mlops/grafana/password
+echo "Checking out branch $BRANCH..."
+git checkout "$BRANCH"
+
+echo "Pulling latest changes..."
+git pull origin "$BRANCH"
+
+echo "Building and running..."
+
+make generate_env
+make build_and_run
+EOF
