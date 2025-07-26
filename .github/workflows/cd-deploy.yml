@@ -1,4 +1,4 @@
-name: ci-tests
+name: cd-deploy
 on:
   push:
     branches:
