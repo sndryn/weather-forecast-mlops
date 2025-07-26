@@ -31,6 +31,9 @@ variable "ssm_weather_db_name" {
     type = string
 }
 
+variable "ssm_instance_key_name" {
+    type = string
+}
 
 # variable "vpc_id" {}
 # variable "whitelisted_ip" {}

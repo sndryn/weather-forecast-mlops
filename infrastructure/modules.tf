@@ -22,16 +22,18 @@ module "rds" {
     postgres_ssm_mlflow_db_name     = var.ssm_mlflow_db_name
     postgres_ssm_dagster_db_name    = var.ssm_dagster_db_name
     postgres_ssm_weather_db_name    = var.ssm_weather_db_name
+    rds_publicly_accessible         = true
 }
 
 module "iam" {
-  source = "./modules/iam"
+  source                  = "./modules/iam"
+  s3_ssm_artifact_bucket  = var.ssm_artifact_bucket
 }
 
-# module "ec2" {
-#   source                    = "./modules/ec2"
-#   subnet_id                 = var.public_subnet_id
-#   key_name                  = var.key_pair_name
-#   security_group_id         = module.security_groups.ec2_sg_id
-#   iam_instance_profile_name = module.iam.instance_profile_name
-# }
+module "ec2" {
+    source                  = "./modules/ec2"
+    ec2_subnet_id           = module.sg.subnet_ids[0]
+    ec2_sg_id               = module.sg.ec2_sg_id
+    ssm_instance_key_name   = var.ssm_instance_key_name
+    ec2_profile             = module.iam.instance_profile_name
+}
