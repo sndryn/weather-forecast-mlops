@@ -1,0 +1,12 @@
+[tool.pylint.messages_control]
+disable = [
+    "missing-function-docstring",
+    "missing-class-docstring",
+    "missing-module-docstring",
+    "too-few-public-methods",
+    "duplicate-code",
+    "too-many-locals",
+    "redefined-outer-name",
+    "unsubscriptable-object",
+    "broad-exception-caught"
+]

@@ -1,0 +1,102 @@
+services:
+  mlflow:
+    build: ./mlflow
+    ports:
+      - "5000:5000"
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - MLFLOW_BACKEND_STORE_URI=postgresql://${MLOPS_DB_USERNAME}:${MLOPS_DB_PASSWORD}@${MLOPS_DB_HOSTNAME}:5432/${MLFLOW_DB_NAME}
+      - MLFLOW_ARTIFACT_ROOT=s3://${MLFLOW_ARTIFACT_BUCKET}
+    command: >
+      sh -c "mlflow server \
+      --backend-store-uri=postgresql://${MLOPS_DB_USERNAME}:${MLOPS_DB_PASSWORD}@${MLOPS_DB_HOSTNAME}:5432/${MLFLOW_DB_NAME} \
+      --default-artifact-root=s3://${MLFLOW_ARTIFACT_BUCKET} \
+      --host 0.0.0.0 \
+      --port 5000"
+    restart: always
+
+  grafana:
+    image: grafana/grafana-enterprise
+    user: "472"
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./grafana/config/grafana_datasources.yaml:/etc/grafana/provisioning/datasources/datasource.yaml:ro
+      - ./grafana/config/grafana_dashboards.yaml:/etc/grafana/provisioning/dashboards/dashboards.yaml:ro
+      - ./grafana/config/grafana_contact_point.yaml:/etc/grafana/provisioning/alerting/contact-points.yaml:ro
+      - ./grafana/config/grafana_notification_rules.yaml:/etc/grafana/provisioning/alerting/notification-rules.yaml:ro
+      - ./grafana/config/grafana_alert_rules.yaml:/etc/grafana/provisioning/alerting/alert-rules.yaml:ro
+      - ./grafana/dashboards:/opt/grafana/dashboards
+    environment:
+      - WEATHER_DB_USERNAME=${MLOPS_DB_USERNAME}
+      - WEATHER_DB_PASSWORD=${MLOPS_DB_PASSWORD}
+      - WEATHER_DB_HOSTNAME=${MLOPS_DB_HOSTNAME}
+      - WEATHER_DB_NAME=${WEATHER_DB_NAME}
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - SLACK_CHANNEL=${SLACK_CHANNEL}
+      - SLACK_WEBHOOK=${SLACK_WEBHOOK}
+    networks:
+      - back-tier
+      - front-tier
+    restart: always
+
+  dagster-webserver:
+    build:
+      context: ./orchestrator
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./orchestrator:/app
+    environment:
+      - DAGSTER_HOME=/app
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - DAGSTER_DB_USERNAME=${MLOPS_DB_USERNAME}
+      - DAGSTER_DB_PASSWORD=${MLOPS_DB_PASSWORD}
+      - DAGSTER_DB_HOSTNAME=${MLOPS_DB_HOSTNAME}
+      - DAGSTER_DB_NAME=${DAGSTER_DB_NAME}
+      - WEATHER_DB_USERNAME=${MLOPS_DB_USERNAME}
+      - WEATHER_DB_PASSWORD=${MLOPS_DB_PASSWORD}
+      - WEATHER_DB_HOSTNAME=${MLOPS_DB_HOSTNAME}
+      - WEATHER_DB_NAME=${WEATHER_DB_NAME}
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - MLFLOW_EXPERIMENT_NAME=WEATHER-FORECAST-EXPERIMENT
+      - MLFLOW_MODEL_NAME=weather-forecast
+    command: dagster-webserver -h 0.0.0.0 -p 3000
+    depends_on:
+      - mlflow
+    restart: always
+
+  dagster-daemon:
+    build:
+      context: ./orchestrator
+    volumes:
+      - ./orchestrator:/app
+    environment:
+      - DAGSTER_HOME=/app
+      - DAGSTER_DB_USERNAME=${MLOPS_DB_USERNAME}
+      - DAGSTER_DB_PASSWORD=${MLOPS_DB_PASSWORD}
+      - DAGSTER_DB_HOSTNAME=${MLOPS_DB_HOSTNAME}
+      - DAGSTER_DB_NAME=${DAGSTER_DB_NAME}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - WEATHER_DB_USERNAME=${MLOPS_DB_USERNAME}
+      - WEATHER_DB_PASSWORD=${MLOPS_DB_PASSWORD}
+      - WEATHER_DB_HOSTNAME=${MLOPS_DB_HOSTNAME}
+      - WEATHER_DB_NAME=${WEATHER_DB_NAME}
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - MLFLOW_EXPERIMENT_NAME=WEATHER-FORECAST-EXPERIMENT
+      - MLFLOW_MODEL_NAME=weather-forecast
+    command: dagster-daemon run
+    depends_on:
+      - dagster-webserver
+    restart: always
+
+networks:
+  front-tier:
+  back-tier:

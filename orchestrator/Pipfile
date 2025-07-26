@@ -1,0 +1,35 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+dagster = "==1.11.2"
+dagster-graphql = "==1.11.2"
+dagster-pipes = "==1.11.2"
+dagster-webserver = "==1.11.2"
+dagster-shared = "==1.11.2"
+pandas = "==1.5.3"
+kagglehub = "==0.3.12"
+grpcio-health-checking = "==1.46.0"
+protobuf = "==4.25.3"
+mlflow = "==2.1.1"
+scikit-learn = "==1.6.1"
+python-dotenv = "==1.1.1"
+pipenv = "==2025.0.4"
+xgboost = "==3.0.2"
+dagster-postgres = "==0.27.2"
+boto3 = "==1.39.9"
+psycopg = "==3.2.9"
+psycopg2-binary = "==2.9.10"
+sqlalchemy = "==1.4.54"
+
+[dev-packages]
+black = "==23.3.0"
+pylint = "==3.3.7"
+isort = "==6.0.1"
+pytest = "==8.4.1"
+pre-commit = "*"
+
+[requires]
+python_version = "3.11"

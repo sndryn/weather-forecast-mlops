@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.dagster]
+module_name = "mlops"
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore::UserWarning",
+    "ignore::DeprecationWarning:pandas.core.dtypes.cast"
+]
+
+[tool.isort]
+multi_line_output = 3
+
+[tool.black]
+line-length = 80
+
+[tool.pylint.messages_control]
+disable = [
+    "missing-function-docstring",
+    "missing-class-docstring",
+    "missing-module-docstring",
+    "too-few-public-methods",
+    "duplicate-code",
+    "too-many-locals",
+    "redefined-outer-name",
+    "unsubscriptable-object",
+    "consider-using-with",
+    "no-member",
+    "broad-exception-caught",
+    "too-many-instance-attributes",
+    "broad-exception-caught",
+]

@@ -1,0 +1,232 @@
+apiVersion: 1
+groups:
+    - orgId: 1
+      name: mlops_evaluation
+      folder: alert
+      interval: 1m
+      rules:
+        - uid: fesonzkggeb5sb
+          title: Daily NRMSE per target
+          condition: Is exceeded threshold
+          data:
+            - refId: Number of target exceeded threshold
+              relativeTimeRange:
+                from: 86400
+                to: 0
+              datasourceUid: PCC52D03280B7034C
+              model:
+                datasource:
+                    type: grafana-postgresql-datasource
+                    uid: PCC52D03280B7034C
+                editorMode: code
+                format: table
+                instant: false
+                intervalMs: 60000
+                maxDataPoints: 43200
+                range: true
+                rawQuery: true
+                rawSql: |
+                    SELECT
+                      count(1) AS number_of_target_exceeded_threshold,
+                      $__time(prediction_date)
+                    FROM
+                      weather_world_forecast_metrics
+                    WHERE
+                      nrmse > 0.2
+                    GROUP BY
+                      prediction_date
+                refId: Number of target exceeded threshold
+                sql:
+                    columns:
+                        - name: AVG
+                          parameters:
+                            - name: nrmse
+                              type: functionParameter
+                          type: function
+                        - name: $__time
+                          parameters:
+                            - name: prediction_date
+                              type: functionParameter
+                          type: function
+                    groupBy:
+                        - property:
+                            name: prediction_date
+                            type: string
+                          type: groupBy
+                        - property:
+                            name: target_name
+                            type: string
+                          type: groupBy
+                    limit: 50
+                table: weather_world_forecast_metrics
+            - refId: Number of targets exceeded threshold
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: Number of target exceeded threshold
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: Number of targets exceeded threshold
+                type: reduce
+            - refId: Is exceeded threshold
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                      unloadEvaluator:
+                        params:
+                            - 0
+                        type: lt
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: Number of targets exceeded threshold
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: Is exceeded threshold
+                type: threshold
+          dashboardUid: 83383659-5f78-4108-bb8e-34ff90854130
+          panelId: 2
+          noDataState: NoData
+          execErrState: Error
+          for: 1m
+          annotations:
+            __dashboardUid__: 83383659-5f78-4108-bb8e-34ff90854130
+            __panelId__: "2"
+          isPaused: false
+          notification_settings:
+            receiver: slack_alerts
+        - uid: eesoo37ta68sgb
+          title: Daily Number of missing value
+          condition: Is missing value present
+          data:
+            - refId: Number of missing location
+              relativeTimeRange:
+                from: 3600
+                to: 0
+              datasourceUid: PCC52D03280B7034C
+              model:
+                datasource:
+                    type: grafana-postgresql-datasource
+                    uid: PCC52D03280B7034C
+                editorMode: builder
+                format: table
+                instant: false
+                intervalMs: 60000
+                maxDataPoints: 43200
+                range: true
+                rawQuery: true
+                rawSql: 'SELECT $__time(prediction_date), SUM(number_of_missing_value) FROM weather_world_forecast_missing_value GROUP BY prediction_date LIMIT 50 '
+                refId: Number of missing location
+                sql:
+                    columns:
+                        - name: $__time
+                          parameters:
+                            - name: prediction_date
+                              type: functionParameter
+                          type: function
+                        - name: SUM
+                          parameters:
+                            - name: number_of_missing_value
+                              type: functionParameter
+                          type: function
+                    groupBy:
+                        - property:
+                            name: prediction_date
+                            type: string
+                          type: groupBy
+                    limit: 50
+                table: weather_world_forecast_missing_value
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: Number of missing location
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: B
+                type: reduce
+            - refId: Is missing value present
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                      unloadEvaluator:
+                        params:
+                            - 0
+                        type: lt
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: B
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: Is missing value present
+                type: threshold
+          dashboardUid: 83383659-5f78-4108-bb8e-34ff90854130
+          panelId: 1
+          noDataState: NoData
+          execErrState: Error
+          for: 1m
+          annotations:
+            __dashboardUid__: 83383659-5f78-4108-bb8e-34ff90854130
+            __panelId__: "1"
+          isPaused: false
+          notification_settings:
+            receiver: slack_alerts

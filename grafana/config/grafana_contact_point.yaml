@@ -1,0 +1,11 @@
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: slack_alerts
+    receivers:
+      - uid: slack_uid
+        type: slack
+        settings:
+          url: $SLACK_WEBHOOK
+          recipient: '$SLACK_CHANNEL'

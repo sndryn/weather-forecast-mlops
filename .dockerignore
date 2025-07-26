@@ -5,18 +5,18 @@ __pycache__/
 
 # Terraform
 infrastructure/.terraform
-*.DS_Store
+
 
 # Orchestrator
 *.db
 *.nux
 *.telemetry
-.logs_queue
-.pytest_cache
-orchestrator/mlruns
 orchestrator/mlruns
 orchestrator/schedules
 orchestrator/storage
 orchestrator/logs
 
 .env
+.logs_queue
+.pytest_cache
+*.DS_Store
