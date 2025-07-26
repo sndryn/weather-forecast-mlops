@@ -1,0 +1,56 @@
+name: ci-tests
+on:
+  push:
+    branches:
+      - 'master'
+
+env:
+  AWS_DEFAULT_REGION: "ap-southeast-1"
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ env.AWS_ACESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
+      - uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_wrapper: false
+
+      - name: TF plan
+        id: tf-plan
+        working-directory: "infrastructure"
+        run: |
+          terraform init && terraform plan -var-file vars/prod.tfvars
+
+      - name: TF apply
+        id: tf-apply
+        working-directory: "infrastructure"
+        if: ${{ steps.tf-plan.outcome }} == "success"
+        run: |
+          terraform apply -auto-approve -var-file=vars/prod.tfvars
+
+      - name: Save SSH Key
+        id: save-ssh-key
+        run: |
+          echo "${{ secrets.SSH_KEY }}" > ec2-key.pem
+          chmod 600 ec2-key.pem
+
+      - name: Deploy
+        id: ec2-deploy
+        run: |
+          make deploy KEY_PATH=ec2-key.pem
+
+      - name: Cleanup SSH Key
+        if: always()
+        run: rm -f ec2-key.pem
